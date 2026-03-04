@@ -1,0 +1,43 @@
+[build-system]
+requires      = ["setuptools>=72", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name            = "decision-intelligence"
+version         = "0.1.0"
+description     = "Domain-agnostic Decision Intelligence Framework for uncertainty-aware optimization under constraints."
+readme          = "README.md"
+requires-python = ">=3.11"
+license         = { text = "MIT" }
+keywords        = ["decision-intelligence", "optimization", "uncertainty", "machine-learning"]
+dependencies    = [
+    "numpy>=1.26.0",
+    "scipy>=1.12.0",
+    "pandas>=2.2.0",
+    "pyyaml>=6.0.1",
+    "scikit-learn>=1.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.1.0",
+    "pytest-cov>=5.0.0",
+    "mypy>=1.9.0",
+    "ruff>=0.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "--tb=short -q"
+
+[tool.ruff]
+line-length    = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version         = "3.11"
+strict                 = true
+ignore_missing_imports = true

@@ -1,0 +1,25 @@
+framework:
+  name: decision_intelligence
+  version: "0.1.0"
+  log_level: INFO
+  random_seed: 42
+
+forecasting:
+  default_model: baseline
+  quantile_levels: [0.05, 0.25, 0.50, 0.75, 0.95]
+  n_samples: 1000
+  horizon: 30
+
+optimization:
+  max_iterations: 1000
+  tolerance: 1.0e-6
+  solver: scipy_minimize
+
+risk:
+  var_confidence: 0.95
+  cvar_confidence: 0.95
+  max_drawdown_threshold: 0.20
+
+regime:
+  n_regimes: 3
+  detection_window: 30

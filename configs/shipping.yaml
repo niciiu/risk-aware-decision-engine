@@ -1,0 +1,24 @@
+domain: shipping
+
+features:
+  - carrier_cost
+  - transit_days
+  - reliability_score
+  - volume_kg
+
+search_space:
+  carrier_cost:      [0.0, 500.0]
+  transit_days:      [1.0, 14.0]
+  reliability_score: [0.0, 1.0]
+
+constraints:
+  max_transit_days: 5
+  min_reliability_score: 0.90
+  budget_usd: 100000
+
+objective:
+  primary: minimize_cost
+  secondary: maximize_reliability
+  weights:
+    cost: 0.70
+    reliability: 0.30

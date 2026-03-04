@@ -1,0 +1,84 @@
+Metadata-Version: 2.4
+Name: decision-intelligence
+Version: 0.1.0
+Summary: Domain-agnostic Decision Intelligence Framework for uncertainty-aware optimization under constraints.
+License: MIT
+Keywords: decision-intelligence,optimization,uncertainty,machine-learning
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.26.0
+Requires-Dist: scipy>=1.12.0
+Requires-Dist: pandas>=2.2.0
+Requires-Dist: pyyaml>=6.0.1
+Requires-Dist: scikit-learn>=1.4.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.1.0; extra == "dev"
+Requires-Dist: pytest-cov>=5.0.0; extra == "dev"
+Requires-Dist: mypy>=1.9.0; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"
+
+# Decision Intelligence Framework
+
+Domain-agnostic, production-grade framework for **uncertainty-aware optimization under constraints**.
+
+## Quick Start
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+pytest
+python main.py --pipeline train --config configs/global.yaml
+```
+
+## Architecture
+
+```
+src/decision_intelligence/
+├── core/
+│   ├── forecasting/        # ForecastResult (quantiles + samples, not just lower/upper)
+│   ├── decision/
+│   │   ├── base.py         # DecisionEngine owns Objective + Constraints + RiskModel + Solver
+│   │   └── orchestrator.py # Full 8-step decision loop
+│   ├── constraints/        # Hard/soft constraints + ConstraintRegistry
+│   ├── regime/             # Regime detection
+│   ├── objective/          # BaseObjective + CompositeObjective
+│   ├── risk/               # VaR / CVaR / drawdown
+│   └── optimization/       # BaseSolver(objective, constraints, search_space, context)
+├── domain/
+│   └── shipping/           # Shipping domain adapter
+├── governance/             # Audit logging, model registry, explainability
+└── pipelines/              # Train / Validate / Simulate
+```
+
+## Decision Loop (`orchestrator.py`)
+
+```
+raw_features
+     │
+     ▼
+[1] Forecast        → ForecastResult  (quantiles + samples)
+     │
+     ▼
+[2] Regime Detect   → RegimeState     (label + probability)
+     │
+     ▼
+[3] SearchSpace     → variable bounds (domain-specific)
+     │
+     ▼
+[4] Objective eval  → ObjectiveResult (value + components)
+     │
+     ▼
+[5] Constraints     → feasibility gate + soft penalties
+     │
+     ▼
+[6] Solver.solve()  → OptimizationResult (best_solution)
+     │
+     ▼
+[7] Risk gate       → RiskReport (VaR, CVaR, drawdown)
+     │
+     ▼
+[8] Audit log       → AuditRecord (immutable trace)
+     │
+     ▼
+OrchestratorResult
+```

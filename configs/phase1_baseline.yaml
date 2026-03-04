@@ -1,0 +1,78 @@
+# Risk-Aware Decision Engine — Phase 1 Configuration
+# 
+# Ownership:
+#   objective_weights   → Operations + Finance (monthly review)
+#   budget_cap          → Finance (quarterly mandate)
+#   sla_threshold_days  → Customer Success (SLA agreement)
+#   penalty_per_day     → Finance (cost of SLA breach per unit)
+#   solver              → Engineering (not a business decision)
+#
+# All monetary values in USD.
+# All time values in days.
+# No default values exist in code — missing keys cause explicit errors.
+
+experiment:
+  name: "phase1_baseline"
+  seed: 42                  # Fixed seed = reproducible results. Always set this.
+  description: "5-vendor allocation under budget cap and SLA soft constraint"
+
+scenario:
+  demand: 10000             # units to fulfill this period
+  currency: "USD"
+
+vendors:
+  - vendor_id: "vendor_A"
+    base_cost_per_unit: 4.20
+    reliability_score: 0.97
+    lead_time_days: 2.0
+    capacity_fraction: 0.40   # can handle up to 40% of total demand
+
+  - vendor_id: "vendor_B"
+    base_cost_per_unit: 3.50
+    reliability_score: 0.82
+    lead_time_days: 4.5
+    capacity_fraction: 0.50
+
+  - vendor_id: "vendor_C"
+    base_cost_per_unit: 5.10
+    reliability_score: 0.99
+    lead_time_days: 1.5
+    capacity_fraction: 0.30
+
+  - vendor_id: "vendor_D"
+    base_cost_per_unit: 3.80
+    reliability_score: 0.88
+    lead_time_days: 3.0
+    capacity_fraction: 0.60
+
+  - vendor_id: "vendor_E"
+    base_cost_per_unit: 4.50
+    reliability_score: 0.95
+    lead_time_days: 2.5
+    capacity_fraction: 0.45
+
+constraints:
+  budget_cap:
+    type: hard
+    value: 55000              # $42,000 total cost ceiling — CFO Q4 mandate
+    owner: "Finance"
+
+  sla_threshold:
+    type: soft
+    threshold_days: 3.0       # orders must arrive within 3 days on average
+    penalty_per_day: 1.50     # $1.50 per unit per day beyond SLA
+    owner: "Operations"
+
+objective_weights:
+  w_cost: 0.60                # 60% weight on raw cost minimization
+  w_sla: 0.25                 # 25% weight on SLA compliance
+  w_risk: 0.15                # 15% weight on reliability risk exposure
+  # Rationale: Cost is primary driver. SLA second (customer-facing). 
+  # Risk third (internal operational concern).
+  # These weights should be reviewed quarterly with stakeholders.
+
+solver:
+  type: "continuous_allocation"   # Phase 4: swap to "gurobi" or "ortools" here
+  n_restarts: 5
+  # Why 5 restarts: empirically stable for n_vendors ≤ 10.
+  # Increase to 10+ for n_vendors > 20 or highly constrained problems.

@@ -39,7 +39,7 @@ from decision_intelligence.core.risk.monte_carlo import DemandDistribution
 from decision_intelligence.core.decision.orchestrator import DecisionOrchestrator
 
 
-# ─── Config ──────────────────────────────────────────────────────────────────
+#  Config 
 
 CFG_PATH = Path(__file__).parent.parent / "configs" / "phase1_baseline.yaml"
 
@@ -114,7 +114,7 @@ def build_engine(
     )
 
 
-# ─── Display ──────────────────────────────────────────────────────────────────
+#  Display 
 
 DIV = "─" * 65
 
@@ -210,9 +210,9 @@ def print_risk_report(risk_report, budget_cap: float, n_simulations: int) -> Non
     # Overall tolerance
     print(f"\n  Overall Risk Tolerance: ", end="")
     if risk_report.is_within_tolerance:
-        print(f"✅ WITHIN TOLERANCE")
+        print(f" WITHIN TOLERANCE")
     else:
-        print(f"❌ EXCEEDS TOLERANCE")
+        print(f" EXCEEDS TOLERANCE")
 
     print(f"\n  Interpretation:")
     print(f"  {DIV}")
@@ -257,7 +257,7 @@ def print_phase_comparison(
     print(f"    A system that ignores this is not risk-aware — it is optimistic.")
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+#   Main 
 
 def main() -> None:
     print("\n" + "═" * 65)
@@ -285,7 +285,7 @@ def main() -> None:
 
     logger = AuditLogger()
 
-    # ── Step 1: Deterministic optimizer (Phase 1 pipeline, unchanged) ─────────
+    # Step 1: Deterministic optimizer (Phase 1 pipeline, unchanged) ─────────
     engine       = build_engine(cfg, vendor_profiles, vendor_configs, budget_cap)
     orchestrator = DecisionOrchestrator(engine=engine, audit_logger=logger)
 
@@ -302,7 +302,7 @@ def main() -> None:
         print("\n  Cannot proceed to risk evaluation — optimizer returned infeasible.")
         return
 
-    # ── Step 2: Monte Carlo risk evaluation ───────────────────────────────────
+    #  Step 2: Monte Carlo risk evaluation 
     distribution = DemandDistribution(
         mu=float(demand),
         sigma=1500.0,
@@ -330,7 +330,7 @@ def main() -> None:
 
     print_risk_report(risk_report, budget_cap, n_simulations)
 
-    # ── Step 3: Phase 1 vs Phase 2 comparison ─────────────────────────────────
+    #  Step 3: Phase 1 vs Phase 2 comparison 
     x = np.array([
         opt.best_solution.get(v.vendor_id, 0.0)
         for v in vendor_profiles

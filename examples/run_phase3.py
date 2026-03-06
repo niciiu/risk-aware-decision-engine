@@ -39,7 +39,7 @@ from decision_intelligence.domain.shipping.engine import ShippingVendorEngine, V
 from decision_intelligence.core.decision.orchestrator import DecisionOrchestrator
 
 
-# ─── Config ──────────────────────────────────────────────────────────────────
+#  Config 
 
 CFG_PATH = Path(__file__).parent.parent / "configs" / "phase1_baseline.yaml"
 
@@ -110,8 +110,7 @@ def build_engine(
         solver=solver,
     )
 
-
-# ─── Evaluation metric (shared across ALL strategies) ────────────────────────
+#  Evaluation metric (shared across ALL strategies) 
 
 @dataclass
 class StrategyResult:
@@ -176,8 +175,7 @@ def evaluate_allocation(
         meets_budget=raw_cost <= budget_cap,
     )
 
-
-# ─── Heuristics ──────────────────────────────────────────────────────────────
+#  Heuristics 
 
 def heuristic_cheapest_first(
     vendor_configs: list[VendorConfig],
@@ -283,7 +281,7 @@ def heuristic_balanced_sla(
     return allocation
 
 
-# ─── Display ──────────────────────────────────────────────────────────────────
+#  Display 
 
 DIV = "─" * 72
 
@@ -377,8 +375,7 @@ def print_tradeoff_analysis(
     print(f"    balanced_sla      → SLA-safe, equal treatment, moderate cost")
     print(f"    engine            → explicit tradeoff: best effective cost + risk")
 
-
-# ─── Main ─────────────────────────────────────────────────────────────────────
+# Main 
 
 def main() -> None:
     print("\n" + "═" * 72)
@@ -405,7 +402,7 @@ def main() -> None:
               f"lead={vp.lead_time_days}d {sla_flag}  "
               f"cap={vc.capacity_fraction:.0%}")
 
-    # ── Run engine ────────────────────────────────────────────────────────────
+    # Run engine 
     logger       = AuditLogger()
     engine       = build_engine(cfg, vendor_profiles, vendor_configs, budget_cap)
     orchestrator = DecisionOrchestrator(engine=engine, audit_logger=logger)
@@ -431,7 +428,7 @@ def main() -> None:
         budget_cap=budget_cap,
     )
 
-    # ── Run heuristics ────────────────────────────────────────────────────────
+    # Run heuristics 
     heuristics_raw = [
         (
             "cheapest_first",
@@ -463,7 +460,7 @@ def main() -> None:
             budget_cap=budget_cap,
         ))
 
-    # ── Print strategy details ────────────────────────────────────────────────
+    # Print strategy details 
     print(f"\n{'═' * 72}")
     print(f"  STRATEGY ALLOCATIONS")
     print(f"{'═' * 72}")
@@ -471,7 +468,7 @@ def main() -> None:
         print_strategy_detail(r, demand)
     print_strategy_detail(engine_result, demand)
 
-    # ── Print comparison ──────────────────────────────────────────────────────
+    #  Print comparison
     print_comparison_table(heuristic_results, budget_cap, engine_result)
     print_tradeoff_analysis(heuristic_results, engine_result)
 

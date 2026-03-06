@@ -35,7 +35,7 @@ class SimpleCostObjective(BaseObjective):
             solution[v] * cost_coeffs[i] * demand
             for i, v in enumerate(vendors)
         )
-        return ObjectiveResult(value=cost, breakdown={"cost": cost})
+        return ObjectiveResult(value=cost, component_values={"cost": cost})
 
     def sign(self) -> float:
         return 1.0  # minimise
@@ -74,7 +74,7 @@ def search_space():
 
 @pytest.fixture
 def objective():
-    return SimpleCostObjective(config={})
+    return SimpleCostObjective()
 
 
 @pytest.fixture

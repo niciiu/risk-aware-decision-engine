@@ -1,6 +1,21 @@
-decision_venv/ 
-.venv/ 
-__pycache__/ 
-*.pyc 
-.vscode/ 
-*.xlsx 
+# Virtual environment
+decision_venv/
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Build/egg info
+*.egg-info/
+dist/
+build/
+
+# Misc
+float
+.DS_Store

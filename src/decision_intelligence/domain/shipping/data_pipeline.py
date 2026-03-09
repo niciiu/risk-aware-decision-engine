@@ -160,7 +160,7 @@ def load_contract_data(path: Path) -> pd.DataFrame:
                     pass
 
     df = pd.DataFrame(records)
-    df = df[df["teu"].apply(lambda x: isinstance(x, int))]
+    df = df[df["teu"].notna()]
     return df.reset_index(drop=True)
 
 
